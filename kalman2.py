@@ -25,9 +25,24 @@ X = np.column_stack([x1, x2, x3])
 # The Kalman filter will try to learn the values of all variables
 
 # The Kalman Filter is parameterized by 3 arrays for state transitions, 3 for measurements, and 2 more for initial conditions.
-
+"""
 kf = KalmanFilter(transition_matrices=np.array([[1, 1], [0, 1]]),
 					transition_covariance=0.01 * np.eye(2))
+"""
+
+## This worked
+kf = KalmanFilter(transition_matrices=np.array([[1, 1,0], [0, 1,0],[0,0,1]]),
+                  observation_matrices = [X[0],X[1],X[2]],
+					        transition_covariance=0.01 * np.eye(3))
+					
+					
+kf = kf.em(X, n_iter=5)
+
+(filtered_state_means, filtered_state_covariances) = kf.filter(X)
+
+(smoothed_state_means, smoothed_state_covariances) = kf.smooth(X)
+
+# measurements = np.asarray(X)
 					
 # You can use the kalman Filter immediately without fitting, but its estimates
 # may not be as good as if you fit first
@@ -36,7 +51,7 @@ kf = KalmanFilter(transition_matrices=np.array([[1, 1], [0, 1]]),
 # Then the hidden sequence of states can be predicted using KalmanFilter.smooth():
 
 # Parameters :	Z : [n_timesteps, n_dim_state] array
-states_pred = kf.em(X).smooth([X])[0]
+states_pred = kf
 
 #print('fitted model: {0}'.format(kf))
 
@@ -55,6 +70,6 @@ states_pred = kf.em(X).smooth([X])[0]
 #pl.xlim(xmin=0, xmax=x.max())
 #pl.xlabel('time')
 # pl.show()
-a = xobservations
-print a
-print X
+#a = xobservations
+#print a
+print states_pred
